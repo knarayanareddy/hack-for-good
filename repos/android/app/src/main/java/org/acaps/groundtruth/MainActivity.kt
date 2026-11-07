@@ -85,6 +85,113 @@ class MainActivity : AppCompatActivity() {
         loadUrl(cleanUrl)
     }
 
+    /**
+     * Mobile Tab Reorganization (Scoped exclusively to APK WebView).
+     * Reorganizes Pulse, Risks, Evolution, Honour roll, My space, and Review tabs
+     * from a cramped vertical wrap into a dedicated, sleek, horizontal scrollable pill bar.
+     */
+    private fun injectMobileTabReorganization(webView: WebView?) {
+        val script = """
+            (function() {
+                function applyReorganization() {
+                    var header = document.querySelector('header');
+                    if (!header) return;
+                    var headerContainer = header.querySelector('div:first-child');
+                    if (!headerContainer) return;
+
+                    // 1. Reorganize header with safe status-bar top padding
+                    headerContainer.style.setProperty('display', 'flex', 'important');
+                    headerContainer.style.setProperty('flex-direction', 'column', 'important');
+                    headerContainer.style.setProperty('align-items', 'stretch', 'important');
+                    headerContainer.style.setProperty('padding', '28px 12px 6px 12px', 'important');
+                    headerContainer.style.setProperty('gap', '6px', 'important');
+
+                    var logo = headerContainer.querySelector('a[href="/"]');
+                    var nav = headerContainer.querySelector('nav');
+                    var rightControls = headerContainer.querySelector('div.flex.items-center.gap-2:not(#mobileTopRow)');
+
+                    if (logo) {
+                        logo.style.setProperty('white-space', 'nowrap', 'important');
+                        logo.style.setProperty('font-size', '16px', 'important');
+                    }
+
+                    // Check if top row already created
+                    var topRow = headerContainer.querySelector('#mobileTopRow');
+                    if (!topRow && logo) {
+                        topRow = document.createElement('div');
+                        topRow.id = 'mobileTopRow';
+                        topRow.style.cssText = 'display: flex !important; justify-content: space-between !important; align-items: center !important; width: 100% !important; gap: 8px !important;';
+                        headerContainer.insertBefore(topRow, headerContainer.firstChild);
+                        topRow.appendChild(logo);
+                        if (rightControls) {
+                            topRow.appendChild(rightControls);
+                        }
+                    }
+
+                    // 2. Reorganize navigation tabs into smooth horizontal pill carousel
+                    if (nav) {
+                        nav.style.cssText = 'display: flex !important; flex-direction: row !important; flex-wrap: nowrap !important; overflow-x: auto !important; width: 100% !important; gap: 6px !important; padding: 4px 0 6px 0 !important; scrollbar-width: none !important; -webkit-overflow-scrolling: touch !important; justify-content: flex-start !important;';
+                        
+                        var currentPath = window.location.pathname;
+                        var links = nav.querySelectorAll('a');
+                        var icons = {
+                            '/pulse': '⚡',
+                            '/risks': '📊',
+                            '/moderator/evolution': '🧬',
+                            '/honour': '🏅',
+                            '/me': '👤',
+                            '/moderator': '🛡️',
+                            '/review': '📋'
+                        };
+
+                        var activeLink = null;
+                        links.forEach(function(a) {
+                            var href = a.getAttribute('href');
+                            var isActive = (href === '/' ? currentPath === '/' : (currentPath === href || currentPath.startsWith(href + '/')));
+                            if (isActive) activeLink = a;
+
+                            a.style.cssText = 'flex-shrink: 0 !important; display: inline-flex !important; align-items: center !important; gap: 5px !important; border-radius: 9999px !important; padding: 6px 13px !important; font-size: 12px !important; font-weight: 600 !important; white-space: nowrap !important; text-decoration: none !important; transition: all 0.15s ease !important; ' +
+                                (isActive 
+                                    ? 'background: #0f766e !important; color: #ffffff !important; box-shadow: 0 1px 3px rgba(15,118,110,0.4) !important;' 
+                                    : 'background: #e7e5e4 !important; color: #334155 !important;');
+
+                            // Add icon if missing
+                            if (icons[href] && !a.dataset.hasIcon) {
+                                var iconSpan = document.createElement('span');
+                                iconSpan.textContent = icons[href];
+                                iconSpan.style.cssText = 'font-size: 13px !important; line-height: 1 !important;';
+                                a.insertBefore(iconSpan, a.firstChild);
+                                a.dataset.hasIcon = 'true';
+                            }
+                        });
+
+                        // Automatically scroll active tab into view if needed
+                        if (activeLink && !nav.dataset.initialScrolled) {
+                            nav.dataset.initialScrolled = 'true';
+                            var leftPos = activeLink.offsetLeft - 24;
+                            nav.scrollTo({ left: Math.max(0, leftPos), behavior: 'smooth' });
+                        }
+                    }
+                }
+
+                applyReorganization();
+
+                // Keep reorganized during client-side Next.js navigations
+                if (!window.__mobileNavObserverInitialized) {
+                    window.__mobileNavObserverInitialized = true;
+                    var observer = new MutationObserver(function() {
+                        applyReorganization();
+                    });
+                    var target = document.querySelector('header');
+                    if (target) {
+                        observer.observe(target, { childList: true, subtree: true });
+                    }
+                }
+            })();
+        """.trimIndent()
+        webView?.evaluateJavascript(script, null)
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
         val webView = binding.webView
@@ -118,6 +225,7 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     binding.progressBar.visibility = View.GONE
                     binding.swipeRefresh.isRefreshing = false
+                    injectMobileTabReorganization(view)
                 }
             }
 
@@ -214,12 +322,14 @@ class MainActivity : AppCompatActivity() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
                 super.onPageStarted(view, url, favicon)
                 binding.errorLayout.visibility = View.GONE
+                injectMobileTabReorganization(view)
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
                 binding.swipeRefresh.isRefreshing = false
                 CookieManager.getInstance().flush()
+                injectMobileTabReorganization(view)
             }
 
             override fun onReceivedError(
@@ -228,7 +338,6 @@ class MainActivity : AppCompatActivity() {
                 error: WebResourceError?
             ) {
                 super.onReceivedError(view, request, error)
-                // Only show full error layout if main frame failed
                 if (request?.isForMainFrame == true) {
                     binding.swipeRefresh.isRefreshing = false
                     val currentTarget = getServerUrl()

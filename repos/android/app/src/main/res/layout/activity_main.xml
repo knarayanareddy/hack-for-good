@@ -7,6 +7,19 @@
     android:layout_height="match_parent"
     android:background="@color/acaps_navy">
 
+    <!-- Top Loading Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_gravity="top"
+        android:indeterminate="false"
+        android:max="100"
+        android:progressDrawable="@android:drawable/progress_horizontal"
+        android:visibility="gone"
+        android:elevation="10dp" />
+
     <!-- Main WebView with Pull-to-refresh -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
@@ -20,17 +33,6 @@
             android:background="@color/acaps_navy" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    <!-- Top Loading Progress Bar -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:indeterminate="false"
-        android:max="100"
-        android:progressDrawable="@android:drawable/progress_horizontal"
-        android:visibility="gone" />
 
     <!-- Error State Overlay -->
     <LinearLayout
@@ -47,8 +49,8 @@
             android:layout_width="72dp"
             android:layout_height="72dp"
             android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_acaps_logo"
-            android:contentDescription="ACAPS Ground Truth" />
+            android:contentDescription="ACAPS Ground Truth"
+            android:src="@drawable/ic_acaps_logo" />
 
         <TextView
             android:id="@+id/tvErrorTitle"
