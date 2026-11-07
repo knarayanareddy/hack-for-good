@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Ground Truth Circle</string>
+    <string name="server_url_dialog_title">Server Configuration</string>
+    <string name="server_url_dialog_desc">Enter the Ground Truth server URL (e.g., http://145.94.89.206:3000, http://10.0.2.2:3000, or a tunnel/domain):</string>
+    <string name="btn_save">Connect</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_retry">Retry Connection</string>
+    <string name="connection_error_title">Cannot Reach Server</string>
+    <string name="connection_error_desc">Ensure your Next.js server is running and accessible on this network.</string>
+</resources>

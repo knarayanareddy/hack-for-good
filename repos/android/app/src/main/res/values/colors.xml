@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="acaps_navy">#0f172a</color>
+    <color name="acaps_surface">#1e293b</color>
+    <color name="acaps_gold">#d97706</color>
+    <color name="acaps_blue">#2563eb</color>
+    <color name="text_light">#f8fafc</color>
+    <color name="text_muted">#94a3b8</color>
+    <color name="white">#ffffff</color>
+</resources>

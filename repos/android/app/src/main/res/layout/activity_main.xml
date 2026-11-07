@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/acaps_navy">
+
+    <!-- Main WebView with Pull-to-refresh -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/acaps_navy" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- Top Loading Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:indeterminate="false"
+        android:max="100"
+        android:progressDrawable="@android:drawable/progress_horizontal"
+        android:visibility="gone" />
+
+    <!-- Error State Overlay -->
+    <LinearLayout
+        android:id="@+id/errorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/acaps_navy"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_acaps_logo"
+            android:contentDescription="ACAPS Ground Truth" />
+
+        <TextView
+            android:id="@+id/tvErrorTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/connection_error_title"
+            android:textColor="@color/text_light"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvErrorDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="@string/connection_error_desc"
+            android:textColor="@color/text_muted"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvTargetUrl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="@color/acaps_gold"
+            android:textSize="13sp"
+            android:textStyle="italic" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRetry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/acaps_blue"
+            android:text="@string/btn_retry"
+            android:textColor="@color/white"
+            app:cornerRadius="8dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnConfigureServer"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Change Server URL"
+            android:textColor="@color/acaps_gold" />
+
+    </LinearLayout>
+
+    <!-- Floating Server Settings Pill -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:contentDescription="Server Configuration"
+        android:src="@drawable/ic_settings"
+        app:backgroundTint="@color/acaps_surface"
+        app:elevation="4dp"
+        app:fabCustomSize="42dp"
+        app:tint="@color/text_muted" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
