@@ -53,11 +53,17 @@ export function PersonaSelector({
   async function handleSelect(id: number) {
     setBusyId(id);
     try {
-      await fetch("/api/session", {
+      const res = await fetch("/api/session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ expertId: id }),
       });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) {
+        alert(data.error || "Failed to switch persona. Please try again.");
+        setBusyId(null);
+        return;
+      }
       if (returnTo) {
         window.location.href = returnTo;
       } else {
@@ -65,6 +71,7 @@ export function PersonaSelector({
       }
     } catch (err) {
       console.error("Failed to set persona", err);
+      alert("Network error switching persona.");
       setBusyId(null);
     }
   }

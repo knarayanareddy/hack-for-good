@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { currentExpert } from "@/lib/session";
+import { currentExpert, pickablePersonas } from "@/lib/session";
 import { toRow } from "@/lib/world";
 import { aggregate, buildStats, MIN_PANEL } from "@/lib/scoring";
 import { showExpert } from "@/lib/identity";
@@ -30,7 +30,7 @@ export default async function RiskPage({ params }: { params: Promise<{ id: strin
     w.forecasts.filter((f) => qs.some((q) => q.id === f.questionId)).map((f) => f.expertId)
   );
 
-  const cards: PersonaCardInfo[] = w.experts.map((e) => ({
+  const cards: PersonaCardInfo[] = (await pickablePersonas(w)).map((e) => ({
     id: e.id,
     name: e.realName,
     alias: e.alias,

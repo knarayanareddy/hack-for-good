@@ -85,6 +85,8 @@ export const questions = pgTable("questions", {
   criteria: text("criteria").notNull(),
   season: text("season").notNull().default("current"),
   status: text("status").notNull().default("open"), // open | resolved
+  /** forecast = 6-month ACAPS risk/trigger question; signal = short-horizon "signal check" that resolves in days/weeks */
+  kind: text("kind").notNull().default("forecast"),
   outcome: text("outcome"), // yes | no | unobservable
   opensAt: timestamp("opens_at").notNull().defaultNow(),
   closesAt: timestamp("closes_at").notNull(),
@@ -102,6 +104,10 @@ export const forecasts = pgTable(
     confidence: integer("confidence").notNull().default(2),
     reason: text("reason").notNull().default(""),
     evidenceType: text("evidence_type").notNull().default("none"),
+    /** divergence interview: what would change my mind (pre-registered disconfirmer) */
+    disconfirmer: text("disconfirmer").notNull().default(""),
+    /** divergence interview: what the expert says drives the gap vs ACAPS */
+    gapBasis: text("gap_basis").notNull().default(""),
     identityMode: text("identity_mode").notNull().default("profile"),
     coiFlag: boolean("coi_flag").notNull().default(false),
     secondsSpent: integer("seconds_spent").notNull().default(60),

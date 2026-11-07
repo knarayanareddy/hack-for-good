@@ -12,6 +12,8 @@ hackforgood/
 │   ├── acaps.pdf & acaps.txt          # ACAPS challenge brief and reference documents
 │   └── unicri.pdf & unicri.txt        # UNICRI challenge brief and background documentation
 ├── repos/
+│   ├── acaps-benchmark-repository/    # Ground Truth Circle (ACAPS Benchmark) fullstack prototype with dynamic personas & persistence
+│   ├── acaps-benchmark-repository.zip# Distribution archive for acaps-benchmark-repository
 │   ├── Benchmark-upleveled-improved/   # Ground Truth Circle (ACAPS Benchmark) fullstack prototype
 │   ├── Benchmark-upleveled-improved.zip# Distribution archive for ACAPS Ground Truth Circle
 │   ├── Doorway-levelled-up-packaged/   # Packaged Doorway v2 prototype (UNICRI)

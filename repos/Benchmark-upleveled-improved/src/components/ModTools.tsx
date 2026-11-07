@@ -55,6 +55,8 @@ export function DispatchLab({ risks }: { risks: { id: string; label: string; tri
   const [triggerId, setTriggerId] = useState("");
   const [plan, setPlan] = useState<Plan[] | null>(null);
   const [text, setText] = useState("");
+  const [fast, setFast] = useState(false);
+  const [days, setDays] = useState(14);
   const [done, setDone] = useState("");
   const [busy, setBusy] = useState(false);
   const risk = risks.find((r) => r.id === riskId);
@@ -62,14 +64,14 @@ export function DispatchLab({ risks }: { risks: { id: string; label: string; tri
   async function preview() {
     setBusy(true);
     setDone("");
-    const j = await call("question", { riskId, triggerId: triggerId || undefined, text, dryRun: true });
+    const j = await call("question", { riskId, triggerId: triggerId || undefined, text, dryRun: true, kind: fast ? "signal" : "forecast", days });
     setBusy(false);
     setPlan(j.plan);
     if (!text) setText(j.text);
   }
   async function publish() {
     setBusy(true);
-    const j = await call("question", { riskId, triggerId: triggerId || undefined, text });
+    const j = await call("question", { riskId, triggerId: triggerId || undefined, text, kind: fast ? "signal" : "forecast", days });
     setBusy(false);
     setDone(`Published. ${j.sent} experts notified, ${j.suppressed} deliberately not bothered.`);
     setPlan(null);
@@ -89,6 +91,14 @@ export function DispatchLab({ risks }: { risks: { id: string; label: string; tri
         </select>
       </div>
       <textarea value={text} onChange={(e) => setText(e.target.value)} rows={2} placeholder="Question wording (auto-generated if empty)" className="w-full rounded-xl border border-stone-300 bg-white p-2 text-sm" />
+      <label className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
+        <input type="checkbox" checked={fast} onChange={(e) => { setFast(e.target.checked); setPlan(null); }} />
+        <b>⚡ Fast-loop signal check</b>
+        <span className="text-xs text-stone-500">short horizon, observable, resolves in days — builds early track records and gives experts quick feedback</span>
+        {fast && (
+          <span className="flex items-center gap-1 text-xs">closes in <input type="number" min={3} max={30} value={days} onChange={(e) => setDays(Number(e.target.value))} className="w-14 rounded border border-stone-300 px-1 py-0.5" /> days</span>
+        )}
+      </label>
       <div className="flex gap-2">
         <button disabled={busy} onClick={preview} className="rounded-xl border border-slate-900 px-4 py-2 text-sm font-semibold hover:bg-stone-100">Dry-run dispatch</button>
         {plan && <button disabled={busy} onClick={publish} className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-semibold text-white">Publish &amp; notify {notify.length}</button>}

@@ -87,7 +87,21 @@ export function toRow(w: World, e: Expert): ExpertRow {
     anonymity: e.anonymity,
     retroactive: e.retroactive,
     verification: e.verification,
-    region: expertRegion(w, e),
+    // Small-cell guard: a region label is only attached to a contribution if enough OTHER experts share it,
+    // otherwise "Anonymous expert · Eastern Africa" could single out one person.
+    region: regionSafe(w, e),
     isModerator: e.isModerator,
   };
+}
+
+/** Number of non-moderator experts whose primary region matches this expert's. */
+export function regionPeers(w: World, e: Expert): number {
+  const r = expertRegion(w, e);
+  if (!r) return 0;
+  return w.experts.filter((x) => !x.isModerator && expertRegion(w, x) === r).length;
+}
+
+export const MIN_REGION_K = 5;
+export function regionSafe(w: World, e: Expert): string {
+  return regionPeers(w, e) >= MIN_REGION_K ? expertRegion(w, e) : "";
 }

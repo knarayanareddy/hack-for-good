@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { currentExpert } from "@/lib/session";
+import { currentExpert, pickablePersonas } from "@/lib/session";
 import { buildStats, expertiseOf, badgesOf, aggregate, type Stats } from "@/lib/scoring";
 import { matchScore } from "@/lib/dispatch";
 import { Card, H, Pill, ago, fmtDate } from "@/components/ui";
@@ -21,7 +21,7 @@ export default async function Pulse() {
     isCustom: e.archetype === "real" || e.id > 29,
   });
 
-  const cards = w.experts.map(toPersonaCard);
+  const cards = (await pickablePersonas(w)).map(toPersonaCard);
 
   if (!me) {
     return (
@@ -121,10 +121,11 @@ export default async function Pulse() {
             <Card key={n.id} className="border-teal-200">
               <div className="mb-2 flex flex-wrap items-center gap-2">
                 <Pill tone="teal">Asked of you</Pill>
+                {q.kind === "signal" && <Pill tone="amber">⚡ Fast loop · resolves in days</Pill>}
                 <Pill>{risk.country}</Pill>
                 <span className="text-xs text-stone-500">{ago(n.createdAt)} · closes {fmtDate(q.closesAt)}</span>
               </div>
-              <h3 className="font-serif text-lg font-semibold leading-snug">{risk.title}</h3>
+              <h3 className="font-serif text-lg font-semibold leading-snug">{q.kind === "signal" ? q.text : risk.title}</h3>
               <div className="mt-2 rounded-lg bg-stone-50 px-3 py-2 text-xs text-stone-600">
                 <b>Why you&apos;re seeing this:</b> {n.reason} · match {n.score}/100
               </div>
@@ -163,7 +164,7 @@ export default async function Pulse() {
           <div className="space-y-2">
             {radar.map(({ q, m }) => (
               <Link key={q.id} href={`/q/${q.id}`} className="block rounded-xl border border-stone-200 bg-white p-3 text-sm hover:border-teal-500">
-                <b>{w.riskById.get(q.riskId)!.country}</b> — {w.riskById.get(q.riskId)!.title.slice(0, 120)}
+                <b>{w.riskById.get(q.riskId)!.country}</b> — {q.kind === "signal" ? `⚡ ${q.text}` : w.riskById.get(q.riskId)!.title.slice(0, 120)}
                 <div className="text-xs text-stone-500">match {m.score} · {m.parts.map((p) => p.label).join(" · ")}</div>
               </Link>
             ))}

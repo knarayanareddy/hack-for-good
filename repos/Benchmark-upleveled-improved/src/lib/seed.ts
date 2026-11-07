@@ -6,6 +6,7 @@ import { makeAlias } from "./identity";
 import { LEVEL_PRIOR } from "./constants";
 import { loadWorld } from "./world";
 import { planDispatch } from "./dispatch";
+import { seedSignals } from "./seed3";
 
 type RiskJson = (typeof riskData)[number];
 
@@ -141,6 +142,7 @@ async function runSeed() {
     client.release();
   }
   if (didSeed) await seedNotifications();
+  await seedSignals();
 }
 
 async function chunked<T>(rows: T[], fn: (c: T[]) => Promise<unknown>, size = 200) {

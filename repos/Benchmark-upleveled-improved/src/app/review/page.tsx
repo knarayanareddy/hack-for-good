@@ -97,6 +97,65 @@ export default function Review() {
     <div className="space-y-10">
       <H sub="A review of github.com/knarayanareddy/benchmark against the ACAPS Ground Truth brief — and what this build does about it.">Review &amp; design answers</H>
 
+      <section className="space-y-4">
+        <Card className="border-teal-300 bg-teal-50/60">
+          <h2 className="font-serif text-2xl font-semibold">A candid read of the upleveled build (v2) — and what v3 changes</h2>
+          <p className="mt-2 text-sm text-slate-800">
+            <b>Verdict.</b> v2 is a genuine answer to the brief, not a mock-up: invite-only circles, a blind-first estimate, one function through which identity leaves the database,
+            relevance-gated dispatch that records what it held back, a dissent loop that closes back to the expert, and a Roundtable. That is why the ACAPS experts reacted well —
+            it answers the questions they actually ask (&ldquo;who sees me?&rdquo;, &ldquo;will this spam me?&rdquo;, &ldquo;does anyone read it?&rdquo;).
+            The sea-of-sameness worry is fair for the <i>pitch</i>, not the product: the deep parts (measurement, trust) are invisible in three minutes.
+            So I tested v2 for places where the trust promise could break, and fixed what I found.
+          </p>
+        </Card>
+        <Card>
+          <h3 className="mb-2 font-serif text-lg font-semibold">What I found in v2 → what v3 does</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[760px] text-sm">
+              <thead className="text-left text-xs uppercase text-stone-500"><tr><th className="py-1 pr-3">Weak point in v2</th><th className="pr-3">Why it matters</th><th className="pr-3">v3</th><th>See it</th></tr></thead>
+              <tbody className="align-top">
+                {[
+                  ["Session was a bare, unsigned cookie (gt_expert=&lt;id&gt;); any persona, incl. moderator or a Sealed expert, could be assumed by anyone", "A trust product whose identity layer can be bypassed in one line of devtools cannot honestly promise anonymity (Technology feasibility, 15%)", "HMAC-signed sessions; created profiles only usable from the browser that owns them (signed ownership cookie); seeded personas only when DEMO_MODE is on", "/api/session, src/lib/session.ts"],
+                  ["Expertise evidence is mostly the 6-month track record, so in a ~2-month pilot nobody's weight moves and a poser looks the same as an expert", "The cold-start problem is the real answer to 'how do you know they're an expert' and to early drop-off", "Fast-loop signal checks: observable, 9–21 day questions with the same scoring, resolution receipts and private calibration. Experts get a verdict in days; weights start moving in week 2", "/pulse (⚡), /moderator/dispatch (new toggle)"],
+                  ["A pseudonym was treated as safe. In a circle of 5–10, country + role + theme + a region label can single out one person", "Sealed experts in conflict zones are exactly the people who can be harmed; the brief calls anonymity non-negotiable", "Live k-anonymity meter ('how many people could you be confused with?') with concrete advice; region labels auto-stripped when fewer than 5 peers share the region", "/me → Re-identification risk"],
+                  ["'Are you sure?' captured only a number and a free-text reason", "Analysts cannot tell new information from a different reading of the same facts, and nothing is recorded that can later be checked", "Neutral 2-tap interview: what drives the gap, and a pre-registered 'what would change my mind'. Reason columns are counterbalanced per question; analysts see both fields on the dissent desk", "/q/[id] after answering; /moderator"],
+                  ["Integrity checks looked at one person at a time", "The cheapest way to game a small circle is two profiles (or friends) moving in lock-step", "Coordination check: near-identical numbers, minutes apart, overlapping wording. Metadata only, so it works on Sealed experts. Shown as a question, never a penalty", "/moderator/integrity"],
+                ].map(([a, b, c, d]) => (
+                  <tr key={a} className="border-t border-stone-200">
+                    <td className="py-2 pr-3" dangerouslySetInnerHTML={{ __html: a }} />
+                    <td className="py-2 pr-3 text-slate-600">{b}</td>
+                    <td className="py-2 pr-3 text-slate-800">{c}</td>
+                    <td className="py-2 text-xs text-stone-500">{d}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+        <div className="grid gap-4 md:grid-cols-2">
+          <Card>
+            <h3 className="mb-2 font-serif text-lg font-semibold">Judging criteria — where it stands</h3>
+            <ul className="space-y-1.5 text-sm text-slate-700">
+              <li><b>Concept (40%) — strong.</b> Covers both tracks and closes the loop to analysts. The sharpest line: <i>the expert sets the visibility dial, and we show them the risk to their own anonymity.</i></li>
+              <li><b>Prototype (20%) — strong.</b> End-to-end on the real 139-risk export; every claim on this page is clickable.</li>
+              <li><b>Technology feasibility (15%) — was the weakest, now credible.</b> Signed sessions and the k-anonymity meter fix the most attackable parts. No generative model sees expert text, which avoids the biggest legal question.</li>
+              <li><b>Product potential (15%) — good.</b> The question bank + circle engine travels to IPC, FEWS NET and INGOs.</li>
+              <li><b>Business (5%) / Wow (5%).</b> Donor-funded circles per crisis; the wow moment is the &lsquo;what each audience sees of me&rsquo; panel plus a fast-loop receipt.</li>
+            </ul>
+          </Card>
+          <Card>
+            <h3 className="mb-2 font-serif text-lg font-semibold">Still open — said plainly</h3>
+            <ul className="list-inside list-disc space-y-1 text-sm text-slate-700">
+              <li>Every expert, forecast and debate here is <b>synthetic</b>, including the fast-loop track records and the lock-step pair. Nothing shows the panel beats ACAPS.</li>
+              <li>Fast-loop checks shift work onto analysts, who must resolve each one. Needs a triage rule (e.g. auto-resolve from ACLED/UNHCR feeds, human review on disputes).</li>
+              <li>The &lsquo;loaded language&rsquo; lexicon can mis-flag translated or non-native English. Keep it watch-only, audit it per language, and never let it touch weights (today it doesn&apos;t).</li>
+              <li>Real auth (passkey / emailed magic link), a separate custodian for Sealed verification, and a DPIA are required before any real expert joins.</li>
+              <li>Weights at small n are noisy; shrinkage helps but does not make an individual&apos;s Brier trustworthy before ~10 resolved items.</li>
+            </ul>
+          </Card>
+        </div>
+      </section>
+
       <section className="grid gap-4 md:grid-cols-3">
         <Card>
           <h2 className="font-serif text-lg font-semibold">What Benchmark is</h2>
@@ -169,7 +228,7 @@ export default function Review() {
             <li>All experts, forecasts and debates are <b>synthetic</b>. Track records run on real ACAPS outcomes but fake forecasters. No claim that the panel beats ACAPS — that needs the prospective pilot (~445 resolved statements for a 0.02 Brier gain).</li>
             <li>The ACAPS probability bar uses the empirical materialisation rate per rating (Very Low 25% · Low 40% · Medium 48% · High 80% · Very High 88%) — small samples at the tails.</li>
             <li>Political-motive detection is pattern-flagging only; it needs human judgement and an appeals path.</li>
-            <li>Demo auth is a persona switcher. Production needs magic-link / Signal-style auth, encrypted identity vault, a separated custodian for Sealed verification and a DPIA.</li>
+            <li>Demo auth is a persona switcher gated by signed cookies and DEMO_MODE. Production needs magic-link / passkey auth, an encrypted identity vault, a separate custodian for Sealed verification and a DPIA.</li>
             <li>Low bandwidth: server-rendered pages, no images, minimal JS. Offline/SMS fallback and more languages than EN/FR are roadmap.</li>
           </ul>
         </Card>
