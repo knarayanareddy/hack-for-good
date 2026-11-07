@@ -10,6 +10,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.webkit.CookieManager
+import android.webkit.JsPromptResult
+import android.webkit.JsResult
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
@@ -19,7 +21,6 @@ import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.acaps.groundtruth.databinding.ActivityMainBinding
@@ -32,7 +33,8 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val PREFS_NAME = "ground_truth_prefs"
         private const val KEY_SERVER_URL = "server_url"
-        private const val DEFAULT_WIFI_URL = "http://145.94.89.206:3000"
+        private const val DEFAULT_WIFI_URL = "http://10.59.249.65:3000"
+        private const val ALT_WIFI_URL = "http://145.94.89.206:3000"
         private const val DEFAULT_EMULATOR_URL = "http://10.0.2.2:3000"
     }
 
@@ -50,6 +52,11 @@ class MainActivity : AppCompatActivity() {
 
         val initialUrl = getServerUrl()
         loadUrl(initialUrl)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        CookieManager.getInstance().flush()
     }
 
     private fun isEmulator(): Boolean {
@@ -85,6 +92,7 @@ class MainActivity : AppCompatActivity() {
 
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
+        @Suppress("DEPRECATION")
         settings.databaseEnabled = true
         settings.loadWithOverviewMode = true
         settings.useWideViewPort = true
@@ -111,6 +119,78 @@ class MainActivity : AppCompatActivity() {
                     binding.progressBar.visibility = View.GONE
                     binding.swipeRefresh.isRefreshing = false
                 }
+            }
+
+            override fun onJsAlert(
+                view: WebView?,
+                url: String?,
+                message: String?,
+                result: JsResult?
+            ): Boolean {
+                MaterialAlertDialogBuilder(this@MainActivity)
+                    .setTitle("Ground Truth Circle")
+                    .setMessage(message ?: "")
+                    .setPositiveButton(android.R.string.ok) { dialog, _ ->
+                        result?.confirm()
+                        dialog.dismiss()
+                    }
+                    .setOnCancelListener {
+                        result?.cancel()
+                    }
+                    .show()
+                return true
+            }
+
+            override fun onJsConfirm(
+                view: WebView?,
+                url: String?,
+                message: String?,
+                result: JsResult?
+            ): Boolean {
+                MaterialAlertDialogBuilder(this@MainActivity)
+                    .setTitle("Confirmation")
+                    .setMessage(message ?: "")
+                    .setPositiveButton(android.R.string.ok) { dialog, _ ->
+                        result?.confirm()
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton(android.R.string.cancel) { dialog, _ ->
+                        result?.cancel()
+                        dialog.dismiss()
+                    }
+                    .setOnCancelListener {
+                        result?.cancel()
+                    }
+                    .show()
+                return true
+            }
+
+            override fun onJsPrompt(
+                view: WebView?,
+                url: String?,
+                message: String?,
+                defaultValue: String?,
+                result: JsPromptResult?
+            ): Boolean {
+                val input = EditText(this@MainActivity).apply {
+                    setText(defaultValue ?: "")
+                }
+                MaterialAlertDialogBuilder(this@MainActivity)
+                    .setTitle(message ?: "Enter Value")
+                    .setView(input)
+                    .setPositiveButton(android.R.string.ok) { dialog, _ ->
+                        result?.confirm(input.text.toString())
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton(android.R.string.cancel) { dialog, _ ->
+                        result?.cancel()
+                        dialog.dismiss()
+                    }
+                    .setOnCancelListener {
+                        result?.cancel()
+                    }
+                    .show()
+                return true
             }
         }
 
@@ -208,18 +288,23 @@ class MainActivity : AppCompatActivity() {
     private fun showServerConfigDialog() {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_server_url, null)
         val etUrl = dialogView.findViewById<EditText>(R.id.etServerUrl)
-        val btnWifi = dialogView.findViewById<Button>(R.id.btnPresetWifi)
+        val btnWifiCurrent = dialogView.findViewById<Button>(R.id.btnPresetWifiCurrent)
         val btnEmulator = dialogView.findViewById<Button>(R.id.btnPresetEmulator)
+        val btnWifiAlt = dialogView.findViewById<Button>(R.id.btnPresetWifiAlt)
 
         val currentUrl = getServerUrl()
         etUrl.setText(currentUrl)
 
-        btnWifi.setOnClickListener {
+        btnWifiCurrent.setOnClickListener {
             etUrl.setText(DEFAULT_WIFI_URL)
         }
 
         btnEmulator.setOnClickListener {
             etUrl.setText(DEFAULT_EMULATOR_URL)
+        }
+
+        btnWifiAlt.setOnClickListener {
+            etUrl.setText(ALT_WIFI_URL)
         }
 
         MaterialAlertDialogBuilder(this)

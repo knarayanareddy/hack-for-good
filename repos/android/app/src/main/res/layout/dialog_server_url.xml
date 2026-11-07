@@ -32,38 +32,63 @@
             android:id="@+id/etServerUrl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="http://145.94.89.206:3000"
+            android:hint="http://10.59.249.65:3000"
             android:inputType="textUri"
             android:textColor="@color/text_light"
             android:textSize="14sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="Quick Presets:"
+        android:textColor="@color/text_muted"
+        android:textSize="11sp"
+        android:textStyle="bold" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:orientation="horizontal">
+        android:layout_marginTop="6dp"
+        android:orientation="vertical">
 
         <Button
-            android:id="@+id/btnPresetWifi"
+            android:id="@+id/btnPresetWifiCurrent"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="4dp"
-            android:text="Mac Wi-Fi"
+            android:layout_marginBottom="4dp"
+            android:text="Mac Wi-Fi (10.59.249.65:3000)"
             android:textColor="@color/acaps_gold"
-            android:textSize="11sp" />
+            android:textSize="12sp" />
 
-        <Button
-            android:id="@+id/btnPresetEmulator"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:text="Emulator"
-            android:textColor="@color/acaps_blue"
-            android:textSize="11sp" />
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnPresetEmulator"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:text="Emulator (10.0.2.2)"
+                android:textColor="@color/acaps_blue"
+                android:textSize="11sp" />
+
+            <Button
+                android:id="@+id/btnPresetWifiAlt"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="Alt IP (145.94.89.206)"
+                android:textColor="@color/text_muted"
+                android:textSize="11sp" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>
