@@ -184,3 +184,73 @@ export const meta = pgTable("meta", {
   key: text("key").primaryKey(),
   value: text("value").notNull(),
 });
+
+/* ------------------------------------------------------------------------------------------------------------------
+ * Situation evolution (ported from the benchmark repo, docs/12-situation-evolution.md)
+ * ---------------------------------------------------------------------------------------------------------------- */
+
+/** The dated history ACAPS recorded for one risk, as the export holds it (src/data/timeline.json). Source data only. */
+export const riskTimelines = pgTable("risk_timelines", {
+  riskId: text("risk_id").primaryKey(),
+  riskTrend: text("risk_trend"),
+  rationaleUpdates: jsonb("rationale_updates").$type<{ date: string | null; text: string }[]>().notNull(),
+  triggers: jsonb("triggers")
+    .$type<
+      {
+        id: string;
+        title: string | null;
+        completionHistory: { date: string; value: number }[];
+        trendHistory: { date: string; value: string }[];
+        dateEnteredISO: string | null;
+        lastUpdateISO: string | null;
+      }[]
+    >()
+    .notNull(),
+});
+
+/**
+ * Ledger of released panel rounds, written ONCE per (question, round) when a moderator closes the round. Panel series
+ * read only this table, never live forecasts, so an open round can never be differenced. A round closed below the
+ * release floor keeps its respondent count and a null snapshot: it is withheld, with no numbers.
+ */
+export const roundReleases = pgTable(
+  "round_releases",
+  {
+    id: serial("id").primaryKey(),
+    questionId: integer("question_id").notNull(),
+    round: integer("round").notNull(), // 1 = first instinct, 2 = after the second look
+    n: integer("n").notNull(),
+    closed: boolean("closed").notNull().default(true),
+    visibility: text("visibility").notNull().default("panel"),
+    at: timestamp("at").notNull().defaultNow(),
+    /** { estimate, lo, hi } as FRACTIONS in [0,1]; null when withheld */
+    snapshot: jsonb("snapshot").$type<{ estimate: number; lo: number; hi: number } | null>(),
+    synthetic: boolean("synthetic").notNull().default(false),
+  },
+  (t) => [uniqueIndex("round_release_q_r").on(t.questionId, t.round)]
+);
+
+/** Analyst links between two questions: a moderator's stated mechanism and rival explanation. Never inferred. */
+export const questionLinks = pgTable(
+  "question_links",
+  {
+    id: text("id").primaryKey(),
+    fromQuestionId: integer("from_question_id").notNull(),
+    toQuestionId: integer("to_question_id").notNull(),
+    mechanism: text("mechanism").notNull(),
+    rival: text("rival").notNull(),
+    by: integer("by").notNull(),
+    day: text("day").notNull(),
+    version: integer("version").notNull().default(0),
+  },
+  (t) => [uniqueIndex("question_link_pair").on(t.fromQuestionId, t.toQuestionId)]
+);
+
+/** Staff audit trail: who did what to which object. Targets are ids only, never content. */
+export const auditLog = pgTable("audit_log", {
+  id: serial("id").primaryKey(),
+  actorId: integer("actor_id").notNull(),
+  action: text("action").notNull(),
+  target: text("target").notNull(),
+  at: timestamp("at").notNull().defaultNow(),
+});

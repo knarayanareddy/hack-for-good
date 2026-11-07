@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export function ModNav({ here }: { here: string }) {
-  const items: [string, string][] = [["/moderator", "Overview"], ["/moderator/dispatch", "Dispatch lab"], ["/moderator/synthesis", "Synthesis & resolution"], ["/moderator/integrity", "Integrity signals"]];
+  const items: [string, string][] = [["/moderator", "Overview"], ["/moderator/dispatch", "Dispatch lab"], ["/moderator/synthesis", "Synthesis & resolution"], ["/moderator/evolution", "Situation evolution"], ["/moderator/integrity", "Integrity signals"]];
   return (
     <div className="mb-6 flex flex-wrap gap-2">
       {items.map(([h, l]) => (

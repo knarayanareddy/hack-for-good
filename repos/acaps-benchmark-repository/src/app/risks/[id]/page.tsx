@@ -9,6 +9,8 @@ import { Card, Pill, ago, levelTone } from "@/components/ui";
 import { Roundtable, type PostView } from "@/components/Roundtable";
 import { PersonaSelector, type PersonaCardInfo } from "@/components/PersonaSelector";
 import { RoundtableHeader } from "@/components/RoundtableHeader";
+import { TimelineSection } from "@/components/Timeline";
+import { getRiskTimeline, timelineAccess } from "@/lib/evolution/service";
 
 export default async function RiskPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -59,6 +61,10 @@ export default async function RiskPage({ params }: { params: Promise<{ id: strin
           return { id: p.id, parentId: p.parentId, who: sh.label, sub: sh.sub, level: sh.level, self: sh.self, kind: p.kind, body: p.body, sourceUrl: p.sourceUrl, when: ago(p.createdAt), reactions: rx };
         })
     : [];
+  // Situation timeline: ACAPS analysis, so it follows the radar rule (held back only while an open question put to this
+  // expert on this risk is unanswered by them; staff always). It is part of the full risk view only.
+  const tlAccess = timelineAccess(w, me, id);
+  const timeline = tlAccess.state === "staff" || tlAccess.state === "open" ? await getRiskTimeline(id) : null;
   const levelOptions = ANON_LEVELS.map((l) => ({ id: l.id, name: l.name }));
   const allowed = me ? levelOptions.filter((l) => ANON_ORDER.indexOf(l.id as never) >= ANON_ORDER.indexOf(me.anonymity as never)) : [];
 
@@ -104,6 +110,31 @@ export default async function RiskPage({ params }: { params: Promise<{ id: strin
               </div>
             </Card>
           )}
+          <Card>
+            {timeline ? (
+              timeline.points > 0 || timeline.riskTrend ? (
+                <TimelineSection timeline={timeline} />
+              ) : (
+                <>
+                  <h2 className="mb-1 font-semibold">How this risk has been recorded to change</h2>
+                  <p className="text-sm text-stone-600">ACAPS has recorded no dated changes for this risk.</p>
+                </>
+              )
+            ) : tlAccess.state === "held" ? (
+              <>
+                <h2 className="mb-1 font-semibold">How this risk has been recorded to change</h2>
+                <p className="text-sm text-stone-600">
+                  Held back while your first estimate is still open. The recorded history is ACAPS analysis, and it appears after you answer, so it cannot anchor your first instinct.
+                </p>
+                <Link href={`/q/${tlAccess.questionIds[0]}`} className="mt-2 inline-block text-sm font-semibold text-teal-700 underline">Give my estimate first (90s)</Link>
+              </>
+            ) : (
+              <>
+                <h2 className="mb-1 font-semibold">How this risk has been recorded to change</h2>
+                <p className="text-sm text-stone-600">Pick a persona (top right) to see the recorded history of this risk.</p>
+              </>
+            )}
+          </Card>
           {riskQ && (
             <Card>
               <h2 className="mb-1 font-semibold">Circle view</h2>

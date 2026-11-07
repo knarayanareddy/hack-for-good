@@ -5,6 +5,7 @@ import { buildStats, expertiseOf, badgesOf, aggregate, type Stats } from "@/lib/
 import { matchScore } from "@/lib/dispatch";
 import { Card, H, Pill, ago, fmtDate } from "@/components/ui";
 import { PersonaSelector, type PersonaCardInfo } from "@/components/PersonaSelector";
+import { PulseToolbar } from "@/components/PulseToolbar";
 
 export default async function Pulse() {
   const { me, w } = await currentExpert();
@@ -86,23 +87,15 @@ export default async function Pulse() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-stone-200 bg-stone-50 px-3.5 py-2 text-xs">
-        <div className="flex items-center gap-1.5">
-          <span className="text-stone-500">Active persona:</span>
-          <b className="text-slate-900">{me.realName}</b>
-          <span className="text-stone-400">({me.alias})</span>
-          <span className="rounded bg-teal-100 px-1.5 py-0.5 font-semibold text-teal-800">{me.anonymity}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Link href="/me" className="font-semibold text-teal-700 hover:underline">
-            Manage in My Space →
-          </Link>
-          <span>·</span>
-          <Link href="/join?returnTo=/pulse" className="text-stone-600 hover:text-slate-900">
-            + Create profile
-          </Link>
-        </div>
-      </div>
+      <PulseToolbar
+        me={{
+          id: me.id,
+          realName: me.realName,
+          alias: me.alias,
+          anonymity: me.anonymity,
+        }}
+        personas={cards}
+      />
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-5 lg:col-span-2">

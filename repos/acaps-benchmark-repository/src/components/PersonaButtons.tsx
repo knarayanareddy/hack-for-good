@@ -7,11 +7,16 @@ export function PersonaButtons({ items }: { items: { id: number; title: string; 
         <button
           key={p.id}
           onClick={async () => {
-            await fetch("/api/session", {
+            const res = await fetch("/api/session", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ expertId: p.id }),
             });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok || !data.ok) {
+              alert(data.error || "Failed to switch persona.");
+              return;
+            }
             window.location.href = p.to;
           }}
           className="rounded-2xl border border-stone-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-teal-600 hover:shadow"

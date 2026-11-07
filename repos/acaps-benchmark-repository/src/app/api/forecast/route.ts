@@ -5,6 +5,7 @@ import { bad, ok, requireExpert } from "@/lib/api";
 import { redact } from "@/lib/scrub";
 import { questionAcaps } from "@/lib/scoring";
 import { EVIDENCE_TYPES, GAP_BASES } from "@/lib/constants";
+import { isRoundClosed } from "@/lib/evolution/service";
 
 export async function POST(req: Request) {
   const r = await requireExpert();
@@ -13,6 +14,8 @@ export async function POST(req: Request) {
   const b = await req.json();
   const q = w.questionById.get(Number(b.questionId));
   if (!q || q.status !== "open") return bad("This question is closed.");
+  // A closed round is a released snapshot: late answers would not be in it, so round 1 stops taking answers.
+  if (await isRoundClosed(q.id, 1)) return bad("Round 1 of this question has been closed by ACAPS.");
   if (w.forecasts.some((f) => f.questionId === q.id && f.expertId === me.id)) return bad("You've already answered — your first estimate is locked. You can revise it after the reveal.");
   const p = Math.round(Number(b.probability));
   if (!(p >= 1 && p <= 99)) return bad("Probability must be between 1 and 99.");
@@ -53,6 +56,7 @@ export async function PATCH(req: Request) {
   const b = await req.json();
   const f = w.forecasts.find((x) => x.questionId === Number(b.questionId) && x.expertId === me.id);
   if (!f) return bad("No estimate to revise.", 404);
+  if (await isRoundClosed(f.questionId, 2)) return bad("Round 2 of this question has been closed by ACAPS.");
   const p = Math.round(Number(b.revised));
   if (!(p >= 1 && p <= 99)) return bad("Probability must be between 1 and 99.");
   await db

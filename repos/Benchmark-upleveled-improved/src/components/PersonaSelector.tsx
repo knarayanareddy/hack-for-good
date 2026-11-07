@@ -64,7 +64,7 @@ export function PersonaSelector({
         setBusyId(null);
         return;
       }
-      if (returnTo) {
+      if (returnTo && returnTo !== window.location.pathname) {
         window.location.href = returnTo;
       } else {
         window.location.reload();
