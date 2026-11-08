@@ -1,7 +1,7 @@
 export type Lang = "en" | "fr";
 const D: Record<string, { en: string; fr: string }> = {
   pulse: { en: "Pulse", fr: "Pouls" },
-  risks: { en: "Risks", fr: "Risques" },
+  risks: { en: "Risks & Roundtable", fr: "Risques & Table ronde" },
   stage: { en: "Honour roll", fr: "Tableau d'honneur" },
   me: { en: "My space", fr: "Mon espace" },
   evolution: { en: "Evolution", fr: "Évolution" },

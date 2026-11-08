@@ -72,12 +72,7 @@ export default async function Home() {
             >
               Inspect Chad R1043 Timeline →
             </Link>
-            <Link
-              href="/review"
-              className="rounded-xl border border-stone-300 bg-white px-5 py-3 font-semibold text-slate-800 hover:bg-stone-100"
-            >
-              Read the Review &amp; Architecture
-            </Link>
+
           </div>
         </div>
         <Card className="lg:col-span-2">

@@ -65,7 +65,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     ["/me", t(lang, "me")],
   ];
   if (me?.isModerator) links.push(["/moderator", t(lang, "moderator")]);
-  links.push(["/review", t(lang, "review")]);
   return (
     <html lang={lang}>
       <body className="min-h-screen bg-[#f6f3ee] text-slate-900 antialiased">

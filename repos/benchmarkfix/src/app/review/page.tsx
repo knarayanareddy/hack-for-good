@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Card, H, Pill } from "@/components/ui";
 
 type QA = {
@@ -124,6 +125,7 @@ const label = {
 } as const;
 
 export default function Review() {
+  redirect("/");
   return (
     <div className="space-y-10">
       <H sub="Comprehensive review of github.com/knarayanareddy/benchmark against the ACAPS Ground Truth Challenge — and how its Situation Evolution engine (docs/11 & docs/12) is wired end-to-end into this prototype.">
