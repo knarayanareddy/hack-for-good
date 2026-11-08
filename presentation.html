@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ground Truth Circle — Pitch Presentation (Hackathon for Good #8)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #070a12;
+      color: #f3f4f6;
+      overflow: hidden;
+    }
+    .font-serif {
+      font-family: 'Newsreader', Georgia, serif;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .slide {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.35s ease-in-out, transform 0.35s ease-in-out;
+      transform: scale(0.98);
+    }
+    .slide.active {
+      display: flex;
+      opacity: 1;
+      transform: scale(1);
+    }
+    .glow-rose {
+      box-shadow: 0 0 80px rgba(244, 63, 94, 0.15);
+    }
+    .glow-teal {
+      box-shadow: 0 0 80px rgba(20, 184, 166, 0.15);
+    }
+  </style>
+</head>
+<body class="h-screen w-screen flex flex-col justify-between p-6 sm:p-12 relative select-none">
+
+  <!-- Ambient background glow -->
+  <div class="fixed inset-0 pointer-events-none z-0">
+    <div id="ambientGlow" class="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-rose-600/10 blur-[140px] rounded-full transition-all duration-700"></div>
+  </div>
+
+  <!-- Top Bar -->
+  <header class="relative z-10 flex items-center justify-between border-b border-gray-800/80 pb-4">
+    <div class="flex items-center gap-3">
+      <span class="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-teal-500 to-teal-800 text-base font-bold text-white shadow-lg shadow-teal-900/40">◉</span>
+      <div>
+        <span class="text-[11px] font-mono uppercase tracking-widest text-teal-400 font-bold">Hackathon for Good #8 · Challenge 2</span>
+        <h1 class="text-sm font-bold text-gray-200">Ground Truth Circle × ACAPS</h1>
+      </div>
+    </div>
+
+    <!-- Slide indicator dots -->
+    <div class="flex items-center gap-2">
+      <button onclick="goToSlide(0)" id="dot-0" class="h-2 w-8 rounded-full bg-rose-500 transition-all"></button>
+      <button onclick="goToSlide(1)" id="dot-1" class="h-2 w-3 rounded-full bg-gray-700 transition-all"></button>
+      <span id="slideCounter" class="text-xs font-mono text-gray-400 ml-2">1 / 2</span>
+    </div>
+  </header>
+
+  <!-- SLIDES CONTAINER -->
+  <main class="relative z-10 flex-1 flex items-center justify-center py-4">
+
+    <!-- SLIDE 1: THE PROBLEM -->
+    <div id="slide-0" class="slide active w-full max-w-5xl flex-col justify-center space-y-6">
+      <div class="space-y-2">
+        <div class="inline-flex items-center gap-2 rounded-full border border-rose-500/30 bg-rose-950/40 px-3 py-1 text-xs font-bold text-rose-300">
+          <span class="h-2 w-2 rounded-full bg-rose-500 animate-pulse"></span>
+          SLIDE 1 · THE BOTTLENECK
+        </div>
+        <h2 class="text-3xl sm:text-5xl font-extrabold font-serif tracking-tight text-white leading-tight">
+          The Problem: <span class="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-amber-300">Crisis Intelligence is Fragile &amp; Slow</span>
+        </h2>
+        <p class="text-sm sm:text-base text-gray-400 max-w-3xl">
+          ACAPS monitors 130+ crises using bilateral phone calls and qualitative check-ins. This model breaks down under pressure:
+        </p>
+      </div>
+
+      <!-- 4 Problem Cards -->
+      <div class="grid sm:grid-cols-2 gap-4">
+        <!-- 1 -->
+        <div class="rounded-2xl border border-gray-800 bg-gray-900/60 p-5 space-y-2 glow-rose">
+          <div class="flex items-center gap-2 text-rose-400 font-bold text-sm">
+            <span class="text-lg">⏳</span>
+            <span>45-Minute Unstructured Asks</span>
+          </div>
+          <p class="text-xs text-gray-300 leading-relaxed">
+            Frontline humanitarians spend 45–60 mins on subjective bilateral interviews. Survey fatigue causes massive drop-off, leaving critical regional gaps.
+          </p>
+        </div>
+
+        <!-- 2 -->
+        <div class="rounded-2xl border border-gray-800 bg-gray-900/60 p-5 space-y-2">
+          <div class="flex items-center gap-2 text-rose-400 font-bold text-sm">
+            <span class="text-lg">⚓</span>
+            <span>Cognitive Anchoring &amp; Groupthink</span>
+          </div>
+          <p class="text-xs text-gray-300 leading-relaxed">
+            When experts see an ACAPS rating or dominant peer opinion first, they anchor to the herd. Crucial minority ground signals get silenced.
+          </p>
+        </div>
+
+        <!-- 3 -->
+        <div class="rounded-2xl border border-gray-800 bg-gray-900/60 p-5 space-y-2">
+          <div class="flex items-center gap-2 text-rose-400 font-bold text-sm">
+            <span class="text-lg">🛡️</span>
+            <span>Severe Frontline Protection Risks</span>
+          </div>
+          <p class="text-xs text-gray-300 leading-relaxed">
+            Humanitarians in sensitive conflict zones (Chad, Sudan, Syria) cannot safely put their real name on political forecasts without severe physical risk.
+          </p>
+        </div>
+
+        <!-- 4 -->
+        <div class="rounded-2xl border border-gray-800 bg-gray-900/60 p-5 space-y-2">
+          <div class="flex items-center gap-2 text-rose-400 font-bold text-sm">
+            <span class="text-lg">🕳️</span>
+            <span>The "Black Hole" Retention Crisis</span>
+          </div>
+          <p class="text-xs text-gray-300 leading-relaxed">
+            Experts share their knowledge but never hear how their insight shifted the analysis or if their judgment was accurate, killing motivation.
+          </p>
+        </div>
+      </div>
+
+      <!-- Bottom Metric Callout -->
+      <div class="rounded-xl border border-rose-900/50 bg-rose-950/20 px-4 py-2.5 flex items-center justify-between text-xs text-rose-200 font-mono">
+        <span><b>The Reality:</b> 45m calls · High fatigue · Anchored groupthink · Zero quantitative feedback</span>
+        <span class="font-bold text-rose-400">UNSUSTAINABLE →</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: THE SOLUTION -->
+    <div id="slide-1" class="slide w-full max-w-5xl flex-col justify-center space-y-6">
+      <div class="space-y-2">
+        <div class="inline-flex items-center gap-2 rounded-full border border-teal-500/30 bg-teal-950/40 px-3 py-1 text-xs font-bold text-teal-300">
+          <span class="h-2 w-2 rounded-full bg-teal-400 animate-pulse"></span>
+          SLIDE 2 · THE SOLUTION
+        </div>
+        <h2 class="text-3xl sm:text-5xl font-extrabold font-serif tracking-tight text-white leading-tight">
+          The Solution: <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-emerald-300 to-sky-300">Ground Truth Circle</span>
+        </h2>
+        <p class="text-sm sm:text-base text-gray-300 max-w-3xl font-medium">
+          "Turning 45-minute field interviews into 90-second structured forecasts — without anchoring, groupthink, or fear."
+        </p>
+      </div>
+
+      <!-- 4 Solution Pillars -->
+      <div class="grid sm:grid-cols-2 gap-4">
+        <!-- 1 -->
+        <div class="rounded-2xl border border-teal-800/80 bg-gray-900/80 p-5 space-y-2 glow-teal">
+          <div class="flex items-center gap-2 text-teal-400 font-bold text-sm">
+            <span class="text-lg">⚡</span>
+            <span>90-Second Delphi Forecast Card</span>
+          </div>
+          <p class="text-xs text-gray-300 leading-relaxed">
+            Drag a probability slider (5–95%) + confidence interval (±4% to ±15%). Asynchronous, mobile-ready, respect responder time. 45 mins reduced to 90 seconds.
+          </p>
+        </div>
+
+        <!-- 2 -->
+        <div class="rounded-2xl border border-teal-800/80 bg-gray-900/80 p-5 space-y-2">
+          <div class="flex items-center gap-2 text-teal-400 font-bold text-sm">
+            <span class="text-lg">🔓</span>
+            <span>"Give-to-Get" Anti-Anchoring Gate</span>
+          </div>
+          <p class="text-xs text-gray-300 leading-relaxed">
+            Neither ACAPS ratings nor peer consensus are visible until the responder commits their independent estimate. Eliminates herd bias completely.
+          </p>
+        </div>
+
+        <!-- 3 -->
+        <div class="rounded-2xl border border-teal-800/80 bg-gray-900/80 p-5 space-y-2">
+          <div class="flex items-center gap-2 text-teal-400 font-bold text-sm">
+            <span class="text-lg">🔒</span>
+            <span>4-Tier Anonymity &amp; Retroactive Retreat</span>
+          </div>
+          <p class="text-xs text-gray-300 leading-relaxed">
+            Named, Alias, Sealed (ACAPS only), Anonymous. If local conflict escalates, responders downgrade past public footprints with 1 click.
+          </p>
+        </div>
+
+        <!-- 4 -->
+        <div class="rounded-2xl border border-teal-800/80 bg-gray-900/80 p-5 space-y-2">
+          <div class="flex items-center gap-2 text-teal-400 font-bold text-sm">
+            <span class="text-lg">💡</span>
+            <span>Structured Roundtable &amp; Impact Receipts</span>
+          </div>
+          <p class="text-xs text-gray-300 leading-relaxed">
+            Debate via structured claims &amp; epistemic reactions (<i>"Changed my mind"</i>). When dissent shifts an analyst, an automated receipt closes the loop.
+          </p>
+        </div>
+      </div>
+
+      <!-- Bottom Status Row -->
+      <div class="rounded-xl border border-teal-900/60 bg-teal-950/30 px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs text-teal-200 font-mono">
+        <span><b>Verified:</b> 139 Real Risks · 0.217 Brier Baseline · Native Android APK Built · Live on Render</span>
+        <a href="https://ground-truth-circle.onrender.com" target="_blank" class="font-bold text-teal-400 hover:underline">
+          ground-truth-circle.onrender.com ↗
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Bottom Navigation Controls -->
+  <footer class="relative z-10 flex items-center justify-between border-t border-gray-800/80 pt-4 text-xs text-gray-400">
+    <div class="flex items-center gap-2 font-mono">
+      <span>Use <kbd class="rounded bg-gray-800 px-1.5 py-0.5 text-gray-200">←</kbd> <kbd class="rounded bg-gray-800 px-1.5 py-0.5 text-gray-200">→</kbd> or <kbd class="rounded bg-gray-800 px-1.5 py-0.5 text-gray-200">Space</kbd> to navigate</span>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <button onclick="prevSlide()" id="prevBtn" class="rounded-xl border border-gray-700 bg-gray-800/70 px-4 py-2 font-semibold text-gray-300 hover:bg-gray-700 disabled:opacity-40 transition">
+        ← Previous Slide
+      </button>
+      <button onclick="nextSlide()" id="nextBtn" class="rounded-xl bg-teal-700 px-4 py-2 font-bold text-white shadow-md shadow-teal-900/30 hover:bg-teal-600 transition">
+        Next: The Solution →
+      </button>
+    </div>
+  </footer>
+
+  <script>
+    let currentSlide = 0;
+    const totalSlides = 2;
+
+    function updateSlide() {
+      // Toggle slides
+      document.querySelectorAll('.slide').forEach((s, idx) => {
+        s.classList.toggle('active', idx === currentSlide);
+      });
+
+      // Update dots & counter
+      document.getElementById('slideCounter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+      document.getElementById('dot-0').className = currentSlide === 0 ? 'h-2 w-8 rounded-full bg-rose-500 transition-all' : 'h-2 w-3 rounded-full bg-gray-700 transition-all';
+      document.getElementById('dot-1').className = currentSlide === 1 ? 'h-2 w-8 rounded-full bg-teal-400 transition-all' : 'h-2 w-3 rounded-full bg-gray-700 transition-all';
+
+      // Ambient glow
+      const glow = document.getElementById('ambientGlow');
+      if (currentSlide === 0) {
+        glow.className = 'absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-rose-600/10 blur-[140px] rounded-full transition-all duration-700';
+      } else {
+        glow.className = 'absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-teal-600/15 blur-[140px] rounded-full transition-all duration-700';
+      }
+
+      // Buttons
+      document.getElementById('prevBtn').disabled = currentSlide === 0;
+      const nextBtn = document.getElementById('nextBtn');
+      if (currentSlide === 1) {
+        nextBtn.textContent = 'Launch Live App ↗';
+        nextBtn.onclick = () => window.open('https://ground-truth-circle.onrender.com', '_blank');
+      } else {
+        nextBtn.textContent = 'Next: The Solution →';
+        nextBtn.onclick = nextSlide;
+      }
+    }
+
+    function goToSlide(n) {
+      currentSlide = n;
+      updateSlide();
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    // Keyboard navigation
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      }
+    });
+
+    updateSlide();
+  </script>
+</body>
+</html>

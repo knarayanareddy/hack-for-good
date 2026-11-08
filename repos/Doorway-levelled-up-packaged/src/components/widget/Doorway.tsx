@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { ArrowRight, ArrowLeft, DoorOpen, LogOut, X, Phone, ScanEye, Users, Baby, Briefcase, HeartHandshake, Hand, Compass } from "lucide-react";
+import { ArrowRight, ArrowLeft, DoorOpen, LogOut, X, Phone, ScanEye, Users, Baby, Briefcase, HeartHandshake, Hand, Compass, Sprout } from "lucide-react";
 import { COPY, type Lang } from "../../lib/content";
 import type { Outcome, Payload } from "../../lib/payload";
 import { ROUTES, lineStatus, routeFor } from "../../lib/routes";
@@ -67,6 +67,9 @@ function Shell(p: DoorwayProps) {
       break;
     case "hallway":
       body = <Hallway lang={p.lang} onHelp={p.onHelp} onLeave={() => p.onOutcome("left_page")} />;
+      break;
+    case "door":
+      body = <DoorView lang={p.lang} onHelp={p.onHelp} onContinue={() => p.onOutcome("continued")} />;
       break;
     case "accident":
       body = <Info lang={p.lang} title={t.fork.accidentTitle} text={t.fork.accidentBody}>
@@ -190,7 +193,7 @@ const forkIcons = { accident: Hand, stop: HeartHandshake, cantstop: Compass, oth
 
 function Fork({ lang, go }: { lang: Lang; go: (v: View) => void }) {
   const t = COPY[lang].fork;
-  const dest: Record<keyof typeof t.options, View> = { accident: "accident", stop: "hallway", cantstop: "wave", other: "other", young: "young", work: "work" };
+  const dest: Record<keyof typeof t.options, View> = { accident: "accident", stop: "hallway", cantstop: "door", other: "other", young: "young", work: "work" };
   return (
     <div className="dw-rise">
       <Heading kicker={t.kicker} title={t.title} />
@@ -226,6 +229,73 @@ function Info({ lang, title, text, children }: { lang: Lang; title: string; text
   );
 }
 
+function DoorView({
+  lang,
+  onHelp,
+  onContinue,
+}: {
+  lang: Lang;
+  onHelp: (routeId: string) => void;
+  onContinue: () => void;
+}) {
+  const t = COPY[lang];
+  const status = lineStatus();
+  const { selfhelp } = routeFor(lang);
+  const nl = lang === "nl";
+  const line = ROUTES["nl-offlimits"];
+  const title = t.door.titles[2] || t.door.titles[0];
+
+  return (
+    <div className="dw-rise">
+      <div className="flex items-start gap-4">
+        <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-lamp/15 text-lamp">
+          <DoorOpen className="h-6 w-6" />
+        </div>
+        <div className="flex-1">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-lamp">{t.door.kicker}</div>
+          <h2 className="font-display mt-1 text-2xl font-medium leading-snug text-paper">{title}</h2>
+          <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-paper/75">{t.door.body}</p>
+        </div>
+      </div>
+
+      <div className="mt-5 flex flex-col gap-3 rounded-xl bg-white/5 p-4 ring-1 ring-white/10 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="text-sm font-medium text-paper">{t.hallway.selfhelp}</div>
+          <div className="text-xs text-paper/60">{t.hallway.selfhelpSub}</div>
+        </div>
+        <ALink
+          variant="lamp"
+          href={selfhelp.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => onHelp(selfhelp.id)}
+          className="!py-3 shrink-0"
+        >
+          <Sprout className="h-4 w-4" /> {t.hallway.selfhelp} <ArrowRight className="h-4 w-4" />
+        </ALink>
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        {nl && status.open ? (
+          <>
+            <ALink variant="soft" href={`tel:${line.phone!.replace(/\s/g, "")}`} onClick={() => onHelp(line.id)} className="text-xs">
+              <Phone className="h-3.5 w-3.5" /> {t.door.callOpen} {line.phone}
+            </ALink>
+            <ALink variant="ghost" href={line.url} target="_blank" rel="noopener noreferrer" onClick={() => onHelp(line.id)} className="text-xs">
+              {t.door.chat}
+            </ALink>
+          </>
+        ) : nl ? (
+          <span className="text-xs text-paper/50">{t.door.closed(status.opensAt)}</span>
+        ) : null}
+        <Btn variant="ghost" onClick={onContinue} className="ml-auto text-paper/55">
+          {t.door.carryOn}
+        </Btn>
+      </div>
+    </div>
+  );
+}
+
 /* ---------- shape 5: the open door (presence, not pressure) ---------- */
 function OpenDoor(p: DoorwayProps) {
   const t = COPY[p.lang];
@@ -248,17 +318,16 @@ function OpenDoor(p: DoorwayProps) {
           <p className="mt-1 text-sm text-paper/70">{t.door.body}</p>
         </div>
         <div className="flex flex-col gap-2 md:items-end">
-          {nl && status.open ? (
-            <>
-              <ALink variant="lamp" href={`tel:${line.phone!.replace(/\s/g, "")}`} onClick={() => p.onHelp(line.id)} className="!py-3 text-base">
-                <Phone className="h-4 w-4" /> {t.door.callOpen} {line.phone}
+          <ALink variant="lamp" href={selfhelp.url} target="_blank" rel="noopener noreferrer" onClick={() => p.onHelp(selfhelp.id)} className="!py-3">
+            <Sprout className="h-4 w-4" /> {t.hallway.selfhelp} <ArrowRight className="h-4 w-4" />
+          </ALink>
+          {nl && status.open && (
+            <div className="flex items-center gap-2">
+              <ALink variant="soft" href={`tel:${line.phone!.replace(/\s/g, "")}`} onClick={() => p.onHelp(line.id)} className="!py-1 text-xs">
+                <Phone className="h-3 w-3" /> {t.door.callOpen} {line.phone}
               </ALink>
-              <ALink variant="ghost" href={line.url} target="_blank" rel="noopener noreferrer" onClick={() => p.onHelp(line.id)}>{t.door.chat}</ALink>
-            </>
-          ) : (
-            <ALink variant="lamp" href={selfhelp.url} target="_blank" rel="noopener noreferrer" onClick={() => p.onHelp(selfhelp.id)} className="!py-3">
-              {nl ? t.door.closed(status.opensAt) : COPY.en.hallway.selfhelp} <ArrowRight className="h-4 w-4" />
-            </ALink>
+              <ALink variant="ghost" href={line.url} target="_blank" rel="noopener noreferrer" onClick={() => p.onHelp(line.id)} className="!py-1 text-xs">{t.door.chat}</ALink>
+            </div>
           )}
         </div>
       </div>
