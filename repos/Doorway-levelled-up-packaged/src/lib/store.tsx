@@ -3,7 +3,7 @@ import type { Lang } from "./content";
 import { build, type Payload } from "./payload";
 import { advance, type Shape, type ShiftState } from "./shift";
 
-export type Tab = "demo" | "desk";
+export type Tab = "pitch" | "demo" | "desk";
 
 export interface Settings {
   lang: Lang;
@@ -78,7 +78,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [local, setLocal] = useState<LocalState>(() => read(K_LOCAL, EMPTY_LOCAL));
   const [events, setEvents] = useState<Payload[]>(() => readArr<Payload>(K_EVENTS));
   const [exited, setExited] = useState(false);
-  const [tab, setTab] = useState<Tab>("demo");
+  const [tab, setTab] = useState<Tab>("pitch");
   const [previewRequest, setPreview] = useState<Ctx["previewRequest"]>(null);
 
   useEffect(() => write(K_SETTINGS, settings), [settings]);
